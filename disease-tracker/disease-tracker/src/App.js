@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import { MenuItem, Select, FormControl } from "@mui/material";
+import InfoBox from "./InfoBox";
 import axios from "axios";
 
 const App = () => {
@@ -49,9 +50,18 @@ const App = () => {
             ))}
           </Select>
         </FormControl>
+      </div>
+
+      {/* Infoboxes */}
+      <div className="app_stats">
+        {/* Infoboxes title="Coronavirus Cases"*/}
+        <InfoBox title="COVID-19 Cases" cases={123} total={2000} />
+
+        {/* Infoboxes title="Coronoavirus Recoveries" */}
+        <InfoBox title="Recovered" cases={123} total={2000} />
 
         {/* Infoboxes */}
-        
+        <InfoBox title="Deaths" cases={123} total={3000} />
       </div>
     </div>
   );
