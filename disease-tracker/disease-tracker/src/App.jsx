@@ -13,6 +13,19 @@ import axios from "axios";
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState("worldwide");
+  const [countryInfo, setCountryInfo] = useState({});
+
+  /** To display data when worldwide is selected in drop down */
+  useEffect(() => {
+    const worldwideData = async () => {
+      const response = await axios.get("https://disease.sh/v3/covid-19/all");
+      const result = response.data;
+
+      setCountryInfo(result);
+    };
+
+    worldwideData();
+  }, []);
 
   useEffect(() => {
     const getCountriesData = async () => {
@@ -33,11 +46,23 @@ const App = () => {
   }, []);
 
   // when selected country is changed in the drop down, change the display name on the menu
-  const onCountryChange = (event) => {
+  const onCountryChange = async (event) => {
     const countryCode = event.target.value;
-    setCountry(countryCode);
 
-    console.log(countryCode);
+    // set url based on if a country is selected or not
+    const url =
+      countryCode === "worldwide"
+        ? "https://disease.sh/v3/covid-19/countries"
+        : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
+
+    const response = await axios.get(url);
+    const result = response.data;
+
+    setCountry(countryCode);
+    setCountryInfo(result);
+
+    console.log("Country Code >>> ", countryCode);
+    console.log("Country Info >>> ", countryInfo);
   };
 
   return (
@@ -67,13 +92,25 @@ const App = () => {
         {/* Infoboxes */}
         <div className="app_stats">
           {/* Cases */}
-          <InfoBox title="COVID-19 Cases" cases={123} total={2000} />
+          <InfoBox
+            title="COVID-19 Cases"
+            cases={countryInfo.todayCases}
+            total={countryInfo.cases}
+          />
 
           {/* Recoveries */}
-          <InfoBox title="Recovered" cases={123} total={2000} />
+          <InfoBox
+            title="Recovered"
+            cases={countryInfo.todayRecovered}
+            total={countryInfo.recovered}
+          />
 
           {/* Deaths */}
-          <InfoBox title="Deaths" cases={123} total={3000} />
+          <InfoBox
+            title="Deaths"
+            cases={countryInfo.todayDeaths}
+            total={countryInfo.deaths}
+          />
         </div>
       </div>
 
